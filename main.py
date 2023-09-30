@@ -1,16 +1,76 @@
 from solver_algorithm import *
 from board import *
+import time
+from random_restart import *
+
+
+def print_queens_board(solution):
+    n = len(solution)
+    for row in range(n):
+        row_string = ""
+        for col in range(n):
+            if solution[row] == col:
+                row_string += "Q "
+            else:
+                row_string += ". "
+        print(row_string.strip())  # Remove trailing space and print the row
+
+
+def log_statistics(choice: int, solutions: [int], execution_times):
+    stas_file = [
+        "dfs_stats.txt",
+        "brfs_stats.txt",
+        "sa_stats.txt",
+        "rrhc_stats.txt",
+    ]
+    with open(stas_file[choice - 1], "w") as f:
+        f.write(str(len(solutions)))
+        f.write(",")
+        f.write(str(execution_times))
+        f.write(",")
+        f.write(str(solutions))
+        f.write("\n")
+    f.close()
+
 
 if __name__ == "__main__":
     print("N-queens solver")
     n = int(input("Enter the size of the chessboard (N): "))
+    if n == 2 or n == 3:
+        print("No solution")
     print("Choice of algorithm: ")
-    print("1. Breadth first search")
+    print("1. Depth first search (not implemented)")
+    print("2. Breadth first search")
+    print("3. Stimulated annealing (not yet implemented)")
+    print("4. Random-restart hill climbing")
     choice = int(input("Enter the choice of the algorithm: "))
+    start = time.time()
     if choice == 1:
-        print("A solution: ")
+        pass
+    elif choice == 2:
         sol = breadth_first_search(n)
+    elif choice == 3:
+        sol = simulated_annealing(n)
+    elif choice == 4:
+        print(
+            "Max iterations\n"
+            "This increases the chances of finding a better solution, \n"
+            "especially when dealing with complex problems or large search spaces\n"
+            "This can lead to quicker runs but may result in the algorithm \n"
+            "getting stuck in local optima, especially for challenging problem instances.\n"
+        )
+        max_iterations = int(input("Enter the max iterations: "))
+
+        sol = random_restart_hill_climbing(n, max_iterations)
     if sol == None:
         print("No solution found")
     else:
-        sol.print_board()
+        print("A solution: ")
+        if choice == 1:
+            sol.print_board()
+        if choice == 3 or choice == 4:
+            print(sol)
+            print_queens_board(sol)
+    print("Runtime in second:", time.time() - start)
+
+    log_statistics(choice, sol, time.time() - start)
