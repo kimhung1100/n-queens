@@ -6,7 +6,7 @@ N-queens problem solver.
 
 -[x] BrFS implementation
 
--[ ] Heuristic algorithm 
+-[x] Heuristic algorithm 
  
 -[x] Random restart hill climbing
 
@@ -26,13 +26,13 @@ function complexity to O(1).
 Also, large dimension is possible to achieve with genetic
 algorithm if parallel genetic algorithm is used.
 
-I tried Simulated anealing algorithm.
+I tried Simulated annealing algorithm.
 
 But not done yet.
 
 ---
 In textbook - page 132:
-For 8-queens, then random-restart hill climbing is very effective inddeed. Even for three million queens, the approach can find solutions in seconds.
+For 8-queens, then random-restart hill climbing is very effective indeed. Even for three million queens, the approach can find solutions in seconds.
 
 I have implemented random-restart, ran in several small number.
 
