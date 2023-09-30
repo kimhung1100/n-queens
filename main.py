@@ -16,7 +16,7 @@ def print_queens_board(solution):
         print(row_string.strip())  # Remove trailing space and print the row
 
 
-def log_statistics(choice: int, solutions: [int], execution_times):
+def log_statistics(choice: int, solutions: [int], execution_times, max_iterations=-1):
     stas_file = [
         "dfs_stats.txt",
         "brfs_stats.txt",
@@ -26,6 +26,9 @@ def log_statistics(choice: int, solutions: [int], execution_times):
     with open(stas_file[choice - 1], "w") as f:
         f.write(str(len(solutions)))
         f.write(",")
+        if max_iterations != -1:
+            f.write(str(max_iterations))
+            f.write(",")
         f.write(str(execution_times))
         f.write(",")
         f.write(str(solutions))
@@ -73,4 +76,4 @@ if __name__ == "__main__":
             print_queens_board(sol)
     print("Runtime in second:", time.time() - start)
 
-    log_statistics(choice, sol, time.time() - start)
+    log_statistics(choice, sol, time.time() - start, max_iterations)
