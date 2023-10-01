@@ -23,7 +23,7 @@ def log_statistics(choice: int, solutions: [int], execution_times, max_iteration
         "sa_stats.txt",
         "rrhc_stats.txt",
     ]
-    with open(stas_file[choice - 1], "w") as f:
+    with open(stas_file[choice - 1], "a") as f:
         f.write(str(len(solutions)))
         f.write(",")
         if max_iterations != -1:
