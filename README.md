@@ -2,15 +2,17 @@
 N-queens problem solver.
 
 
--[ ] DFS implementation
+- [ ]  DFS implementation
 
--[x] BrFS implementation
+- [x] BrFS implementation
 
--[x] Heuristic algorithm 
+- [x] Heuristic algorithm 
  
--[x] Random restart hill climbing
+- [x] Random restart hill climbing
 
--[ ] Run in N queens >= 100000  
+- Stimulate annealing, heuristic O(N^2)
+- [x] Run in 1000 queen in 276s
+- [ ] Run in N queens >= 100000  
 
 3. Heuristic algorithm
 
@@ -28,11 +30,11 @@ algorithm if parallel genetic algorithm is used.
 
 I tried Simulated annealing algorithm.
 
-But not done yet.
-
 ---
 In textbook - page 132:
 For 8-queens, then random-restart hill climbing is very effective indeed. Even for three million queens, the approach can find solutions in seconds.
 
 I have implemented random-restart, ran in several small number.
+
+If I have time, test later.
 
