@@ -1,7 +1,7 @@
 # Introduction to AI ASSIGNMENT 1
 N-queens problem solver.
 
-
+- [ ] Slide https://www.overleaf.com/3643154285cbpwnjpfqymg 
 - [ ]  DFS implementation
 
 - [x] BrFS implementation
