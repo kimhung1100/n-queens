@@ -1,4 +1,5 @@
 import copy
+import random
 class NQueens_board:
     def __init__(self, size):
         self.size = size
@@ -24,16 +25,17 @@ class NQueens_board:
         self.queen_count += 1
         self.order_queens.append((row, col))
     def remove_queen(self, row, col):
-        self.queens[row] = -1
-        self.row_conflicts[row] -= 1
-        self.column_conflicts[col] -= 1
-        self.left_diagonal_conflicts[row + col] -= 1
-        self.right_diagonal_conflicts[row - col + self.size - 1] -= 1
         self.total_conflicts -= (self.row_conflicts[row]
                                  + self.column_conflicts[col]
                                  + self.left_diagonal_conflicts[row + col]
                                  + self.right_diagonal_conflicts[row - col + self.size - 1]
                                  - 4)
+        self.queens[row] = -1
+        self.row_conflicts[row] -= 1
+        self.column_conflicts[col] -= 1
+        self.left_diagonal_conflicts[row + col] -= 1
+        self.right_diagonal_conflicts[row - col + self.size - 1] -= 1
+
         self.queen_count -= 1
         self.order_queens.pop()
     def calculate_conflicts(self):
@@ -92,3 +94,23 @@ class NQueens_board:
 
         # If none of the above conditions are met, it's safe to place a queen in this cell
         return True
+
+    def generate_random(self):
+        # Clear the board and conflicts
+        self.clear_board()
+
+        # Place queens randomly in each row
+        for row in range(self.size):
+            col = random.randint(0, self.size - 1)
+            self.place_queen(row, col)
+
+    def clear_board(self):
+        # Clear the board and reset conflicts
+        self.queens = [-1] * self.size
+        self.row_conflicts = [0] * self.size
+        self.column_conflicts = [0] * self.size
+        self.left_diagonal_conflicts = [0] * (2 * self.size - 1)
+        self.right_diagonal_conflicts = [0] * (2 * self.size - 1)
+        self.total_conflicts = 0
+        self.queen_count = 0
+        self.order_queens = []

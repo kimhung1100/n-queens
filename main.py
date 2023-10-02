@@ -2,14 +2,14 @@ from solver_algorithm import *
 from board import *
 import time
 from random_restart import *
-
+from simulated_annealing import *
 
 def print_queens_board(solution):
-    n = len(solution)
+    n = solution.size
     for row in range(n):
         row_string = ""
         for col in range(n):
-            if solution[row] == col:
+            if solution.queens[row] == col:
                 row_string += "Q "
             else:
                 row_string += ". "
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     print("Choice of algorithm: ")
     print("1. Depth first search (not implemented)")
     print("2. Breadth first search")
-    print("3. Stimulated annealing (not yet implemented)")
+    print("3. Stimulated annealing")
     print("4. Random-restart hill climbing")
     choice = int(input("Enter the choice of the algorithm: "))
     start = time.time()
@@ -54,7 +54,10 @@ if __name__ == "__main__":
     elif choice == 2:
         sol = breadth_first_search(n)
     elif choice == 3:
-        sol = simulated_annealing(n)
+        initial_temperature = 1000.0
+        cooling_rate = 0.99
+
+        sol = sa_nqueens(cooling_rate, initial_temperature, n)
     elif choice == 4:
         print(
             "Max iterations\n"
@@ -73,7 +76,7 @@ if __name__ == "__main__":
         if choice == 2:
             sol.print_board()
         if choice == 3 or choice == 4:
-            print(sol)
+            print(sol.queens)
             print_queens_board(sol)
     print("Runtime in second:", time.time() - start)
 
