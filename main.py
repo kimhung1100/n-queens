@@ -24,14 +24,14 @@ def log_statistics(choice: int, solutions: [int], execution_times, max_iteration
         "rrhc_stats.txt",
     ]
     with open(stas_file[choice - 1], "a") as f:
-        f.write(str(len(solutions)))
+        f.write(str(solutions.size))
         f.write(",")
         if max_iterations != -1:
             f.write(str(max_iterations))
             f.write(",")
         f.write(str(execution_times))
         f.write(",")
-        f.write(str(solutions))
+        f.write(str(solutions.queens))
         f.write("\n")
     f.close()
 
@@ -48,6 +48,7 @@ if __name__ == "__main__":
     print("4. Random-restart hill climbing")
     choice = int(input("Enter the choice of the algorithm: "))
     start = time.time()
+    max_iterations = 0
     if choice == 1:
         pass
     elif choice == 2:
@@ -69,7 +70,7 @@ if __name__ == "__main__":
         print("No solution found")
     else:
         print("A solution: ")
-        if choice == 1:
+        if choice == 2:
             sol.print_board()
         if choice == 3 or choice == 4:
             print(sol)
