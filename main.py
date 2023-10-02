@@ -2,14 +2,14 @@ from solver_algorithm import *
 from board import *
 import time
 from random_restart import *
-
+from simulated_annealing import *
 
 def print_queens_board(solution):
-    n = len(solution)
+    n = solution.size
     for row in range(n):
         row_string = ""
         for col in range(n):
-            if solution[row] == col:
+            if solution.queens[row] == col:
                 row_string += "Q "
             else:
                 row_string += ". "
@@ -24,14 +24,14 @@ def log_statistics(choice: int, solutions: [int], execution_times, max_iteration
         "rrhc_stats.txt",
     ]
     with open(stas_file[choice - 1], "a") as f:
-        f.write(str(len(solutions)))
+        f.write(str(solutions.size))
         f.write(",")
         if max_iterations != -1:
             f.write(str(max_iterations))
             f.write(",")
         f.write(str(execution_times))
         f.write(",")
-        f.write(str(solutions))
+        f.write(str(solutions.queens))
         f.write("\n")
     f.close()
 
@@ -44,16 +44,20 @@ if __name__ == "__main__":
     print("Choice of algorithm: ")
     print("1. Depth first search (not implemented)")
     print("2. Breadth first search")
-    print("3. Stimulated annealing (not yet implemented)")
+    print("3. Stimulated annealing")
     print("4. Random-restart hill climbing")
     choice = int(input("Enter the choice of the algorithm: "))
     start = time.time()
+    max_iterations = 0
     if choice == 1:
         pass
     elif choice == 2:
         sol = breadth_first_search(n)
     elif choice == 3:
-        sol = simulated_annealing(n)
+        initial_temperature = 1000.0
+        cooling_rate = 0.99
+
+        sol = sa_nqueens(cooling_rate, initial_temperature, n)
     elif choice == 4:
         print(
             "Max iterations\n"
@@ -69,10 +73,10 @@ if __name__ == "__main__":
         print("No solution found")
     else:
         print("A solution: ")
-        if choice == 1:
+        if choice == 2:
             sol.print_board()
         if choice == 3 or choice == 4:
-            print(sol)
+            print(sol.queens)
             print_queens_board(sol)
     print("Runtime in second:", time.time() - start)
 
