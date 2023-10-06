@@ -119,6 +119,17 @@ class TestNQueens(unittest.TestCase):
 
         self.assertFalse(board.is_goal())
 
+    def goal_100(self):
+        n = 100
+        queen_positions = [62, 37, 95, 41, 88, 4, 20, 73, 59, 16, 62, 37, 95, 41, 88, 4, 20, 73, 59, 16, 62, 37, 95, 41, 88, 4, 20, 73, 59, 16, 62, 37, 95, 41, 88, 4, 20, 73, 59, 16, 62, 37, 95, 41, 88, 4, 20, 73, 59, 16, 62, 37, 95, 41, 88, 4, 20, 73, 59, 16, 62, 37, 95, 41, 88, 4, 20, 73, 59, 16, 62, 37, 95, 41, 88, 4, 20, 73, 59, 16, 62, 37, 95, 41, 88, 4, 20, 73, 59, 16, 62, 37, 95, 41, 88, 4, 20, 73, 59, 16]
+        board = NQueens_board(n)
+
+        # Place queens in the specified positions
+        for row, col in enumerate(queen_positions):
+            board.place_queen(row, col)
+
+        self.assertFalse(board.is_goal())
+
     def test_goal_state2(self):
         n = 4  # Set the size of the board
         test_board = NQueens_board(n)
