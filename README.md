@@ -1,5 +1,11 @@
 # Introduction to AI ASSIGNMENT 1
-N-queens problem solver.
+N-queens problem solver, Python 3.9.
+
+To run it:
+```bash 
+python main.py
+```
+---
 
 - [ ] Slide https://www.overleaf.com/3643154285cbpwnjpfqymg 
 - [ ]  DFS implementation
@@ -12,7 +18,7 @@ N-queens problem solver.
 
 - Stimulate annealing, heuristic O(N^2)
 - [x] Run in 1000 queen in 276s
-- [ ] Run in N queens >= 100000  
+- [x] Run in N queens = 100000 (in 57s)
 
 3. Heuristic algorithm
 
@@ -29,6 +35,12 @@ Also, large dimension is possible to achieve with genetic
 algorithm if parallel genetic algorithm is used.
 
 I tried Simulated annealing algorithm.
+
+---
+
+Implemented with divide and conquer stimulate annealing.
+
+It can run with N = 100000 in 57s, by Python 3.9.
 
 ---
 In textbook - page 132:
