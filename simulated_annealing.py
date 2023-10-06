@@ -2,6 +2,7 @@ from nqueens_board import NQueens_board
 import random
 import math
 import copy
+import time
 def simulated_annealing(n, max_iterations, initial_temperature, cooling_rate):
     current_state = NQueens_board(n)
     current_state.generate_random()
@@ -51,7 +52,46 @@ def nQueens_heuristics(state: NQueens_board, n: int):
     new_state.remove_queen(position2, new_state.queens[position2])
     new_state.place_queen(position2, state.queens[position1])
     return new_state
+def gradient_heuristics_nQueens(state: NQueens_board, n: int):
+    swaps_performed = 0
 
+    while True:
+        swaps_performed = 0
+
+        for i in range(n):
+            for j in range(i + 1, n):
+                queen_i = i
+                queen_j = j
+
+                if not state.is_safe(queen_i, state.queens[i] or not state.is_safe(queen_j, state.queens[j])):
+                    # Calculate the number of collisions with the current queens
+                    current_collisions = state.calculate_conflicts()
+
+                    # Swap queens
+                    state.remove_queen(queen_i, state.queens[queen_i])
+                    state.place_queen(queen_i, state.queens[queen_j])
+                    state.remove_queen(queen_j, state.queens[queen_j])
+                    state.place_queen(queen_j, state.queens[queen_i])
+
+                    # Calculate the number of collisions after the swap
+                    new_collisions = state.calculate_conflicts()
+
+                    if new_collisions < current_collisions:
+                        # Swap reduces collisions, accept the swap
+                        swaps_performed += 1
+                    else:
+                        # Swap increases or maintains collisions, undo the swap
+                        state.remove_queen(queen_i, state.queens[queen_i])
+                        state.place_queen(queen_i, state.queens[queen_j])
+                        state.remove_queen(queen_j, state.queens[queen_j])
+                        state.place_queen(queen_j, state.queens[queen_i])
+
+        if swaps_performed == 0:
+            # No more swaps can be performed to reduce collisions, exit the loop
+            nQueens_heuristics(state, n)
+            break
+
+    return state
 def sa_nqueens(cooling_rate, temperature, n):
     # heuristics
     queen_positions = list(range(n))
@@ -79,9 +119,10 @@ def sa_nqueens(cooling_rate, temperature, n):
     return current_state
 # Example usage:
 if __name__ == '__main__':
-    n = 30  # Number of queens
-    initial_temperature = 1000.0
+    n = 100  # Number of queens
+    initial_temperature = 1000000.0
     cooling_rate = 0.99
-
+    start = time.time()
     solution = sa_nqueens(cooling_rate, initial_temperature, n)
     solution.print_board()
+    print("Runtime in second:", time.time() - start)
