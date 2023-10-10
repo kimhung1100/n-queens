@@ -1,5 +1,4 @@
 from collections import deque
-#from board import Chessboard
 import random
 import math
 from nqueens_board import NQueens_board

@@ -1,5 +1,4 @@
 from solver_algorithm import *
-from board import *
 import time
 from random_restart import *
 from simulated_annealing import *
@@ -19,12 +18,12 @@ def print_queens_board(solution):
 
 def log_statistics(choice: int, solutions: [int], execution_time, max_iterations=-1):
     stats_files = [
-        "dfs_stats.txt",
-        "brfs_stats.txt",
-        "sa_stats.txt",
-        "rrhc_stats.txt",
-        "p_sa_stats.txt",
-        "dev_sa_stats.txt",
+        "stats/dfs_stats.txt",
+        "stats/brfs_stats.txt",
+        "stats/sa_stats.txt",
+        "stats/rrhc_stats.txt",
+        "stats/p_sa_stats.txt",
+        "stats/dev_sa_stats.txt",
     ]
     with open(stats_files[choice - 1], "a") as f:
         f.write(f"{solutions.size},")
@@ -72,8 +71,8 @@ if __name__ == "__main__":
         print("2. Breadth first search")
         print("3. Stimulated annealing")
         print("4. Random-restart hill climbing")
-        print("5. Parallel stimulated annealing")
-        print("6. Divide and conquer stimulate annealing")
+        print("5. Parallel stimulated annealing (implementing)")
+        print("6. Divide and conquer stimulate annealing (implementing)")
         choice = int(input("Enter the choice of the algorithm: "))
         start = time.time()
         max_iterations = 0
@@ -85,7 +84,7 @@ if __name__ == "__main__":
             print("A solution: ")
             if choice == 2:
                 sol.print_board()
-            if choice == 3 or choice == 4:
+            else:
                 print(sol.queens)
                 print_queens_board(sol)
 
