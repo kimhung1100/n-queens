@@ -18,7 +18,7 @@ python main.py
 
 - Stimulate annealing, heuristic O(N^2)
 - [x] Run in 1000 queen in 276s
-- [x] Run in N queens = 100000 (in 57s)
+- [ ] Run in N queens = 100000 
 
 3. Heuristic algorithm
 
@@ -40,7 +40,7 @@ I tried Simulated annealing algorithm.
 
 Implemented with divide and conquer stimulate annealing.
 
-It can run with N = 100000 in 57s, by Python 3.9.
+
 
 ---
 In textbook - page 132:

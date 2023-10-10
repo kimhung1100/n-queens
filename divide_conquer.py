@@ -43,21 +43,34 @@ def select_yagolm_sol(b: int):
 def divide_conquer(cooling_rate: float, initial_temperature: float, n: int):
 
     nA, nB = cal_A_and_B(n)
-    pattern_A = sa_nqueens(cooling_rate, initial_temperature, nA).queens
-    pattern_B = sa_nqueens(cooling_rate, initial_temperature, nB).queens
+    # pattern_A = sa_nqueens(cooling_rate, initial_temperature, nA).queens
+    # nA = 7
+    # nB = 5
+    # if nA % 6 == 0 or nA % 6 == 4:
+    #     board_pattern_A = NQueens_board(nA)
+    #     for i in range(0, nA // 2):
+    #         board_pattern_A.place_queen(i, i* 2 + 1)
+    #     for i in range(nA // 2, nA):
+    #         board_pattern_A.place_queen(i, (i - nA// 2)* 2)
+    #     pattern_A = board_pattern_A.queens
+    # elif nA % 6 == 2:
+    #     pass
+    pattern_A = sa_nqueens(cooling_rate, initial_temperature, nA)
+    pattern_B = sa_nqueens(cooling_rate, initial_temperature, nB)
     combined_board = NQueens_board(n)
 
     ## Place pattern B solutions into each position of pattern A
     for i in range(n):
-        position_in_pattern_A = pattern_A[i%nA]
-        position_in_pattern_B = pattern_B[i%nA]
+        position_in_pattern_A = pattern_A.queens[i//nB]
+        position_in_pattern_B = pattern_B.queens[i%nB]
         combined_position = position_in_pattern_A*nA + position_in_pattern_B
         combined_board.place_queen(i, combined_position)
 
-    return combined_board
+    sol = sa_nqueens(cooling_rate, initial_temperature, n, combined_board)
+    return sol
 
 
 if __name__ == '__main__':
-    sol = divide_conquer(100)
+    sol = divide_conquer(.99, 1000.0, 100)
     print(sol.queens)
     sol.print_board()

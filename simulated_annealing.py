@@ -92,14 +92,16 @@ def gradient_heuristics_nQueens(state: NQueens_board, n: int):
             break
 
     return state
-def sa_nqueens(cooling_rate, temperature, n):
+def sa_nqueens(cooling_rate, temperature, n, current_state = None):
     # heuristics
-    queen_positions = list(range(n))
-    current_state = NQueens_board(n)
+    if not current_state:
+        queen_positions = list(range(n))
+        current_state = NQueens_board(n)
 
-    # Place queens in the specified positions
-    for row, col in enumerate(queen_positions):
-        current_state.place_queen(row, col)
+        # Place queens in the specified positions
+        for row, col in enumerate(queen_positions):
+            current_state.place_queen(row, col)
+
 
     current_conflicts = current_state.total_conflicts
 
