@@ -92,7 +92,7 @@ def gradient_heuristics_nQueens(state: NQueens_board, n: int):
             break
 
     return state
-def sa_nqueens(cooling_rate, temperature, n, current_state = None):
+def sa_nqueens(start, cooling_rate, temperature, n, current_state = None):
     # heuristics
     if not current_state:
         queen_positions = list(range(n))
@@ -118,13 +118,62 @@ def sa_nqueens(cooling_rate, temperature, n, current_state = None):
                 current_conflicts = next_state.total_conflicts
         temperature = temperature*cooling_rate
 
+        print(current_conflicts)
+        with open("sa_step.txt", "w") as f:
+            f.write(f"{time.time() - start},")
+            f.write(f"{current_conflicts},")
+            f.write(f"{current_state.queens},")
+            f.write(f"{temperature}\n")
+
     return current_state
+
+def very_fast_sa(start, cooling_rate, initial_temperature, n, current_state = None):
+    if not current_state:
+        queen_positions = list(range(n))
+        current_state = NQueens_board(n)
+
+        # Place queens in the specified positions
+        for row, col in enumerate(queen_positions):
+            current_state.place_queen(row, col)
+
+
+    current_conflicts = current_state.total_conflicts
+    iteration = 0
+    reanneal_interval = 10000
+    temperature = initial_temperature
+    while(current_conflicts > 0):
+        next_state = nQueens_heuristics(current_state, n)
+        if next_state.total_conflicts < current_conflicts:
+            current_state = copy.deepcopy(next_state)
+            current_conflicts = next_state.total_conflicts
+        else:
+
+            delta_fitness = next_state.total_conflicts - current_conflicts
+            if random.random() < math.exp(-delta_fitness / temperature):
+                current_state = copy.deepcopy(next_state)
+                current_conflicts = next_state.total_conflicts
+
+        if iteration % reanneal_interval == 0:
+            temperature = current_conflicts*1/(iteration + 1)
+
+        temperature *= cooling_rate
+        iteration += 1
+        print(current_conflicts)
+        with open("vf_sa_step.txt", "w") as f:
+            f.write(f"{time.time() - start},")
+            f.write(f"{current_conflicts},")
+            f.write(f"{current_state.queens},")
+            f.write(f"{temperature}\n")
+
+    return current_state
+
+
 # Example usage:
 if __name__ == '__main__':
     n = 100  # Number of queens
-    initial_temperature = 1000000.0
+    initial_temperature = 1000.0
     cooling_rate = 0.99
     start = time.time()
-    solution = sa_nqueens(cooling_rate, initial_temperature, n)
+    solution = very_fast_sa(start, cooling_rate, initial_temperature, n)
     solution.print_board()
     print("Runtime in second:", time.time() - start)

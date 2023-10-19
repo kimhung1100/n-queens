@@ -38,13 +38,12 @@ def solve_nqueens(n, choice, max_iterations=0):
     elif choice == 2:
         sol = breadth_first_search(n)
     elif choice == 3:
+        start_time = time.time()
         initial_temperature = 1000.0
         cooling_rate = 0.99
-        sol = sa_nqueens(cooling_rate, initial_temperature, n)
+        sol = sa_nqueens(start_time, cooling_rate, initial_temperature, n)
     elif choice == 4:
-        if max_iterations == 0:
-            max_iterations = int(input("Enter the max iterations: "))
-        sol = random_restart_hill_climbing(n, max_iterations)
+        sol = random_restart_hill_climbing(n)
     elif choice == 5:
         initial_temperature = 1000.0
         cooling_rate = 0.99
