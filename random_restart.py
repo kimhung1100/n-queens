@@ -24,54 +24,57 @@ import copy
 #             if state[i] == state[j] or abs(state[i] - state[j]) == abs(i - j):
 #                 conflicts += 1
 #     return conflicts
+def get_min_conflicts_successor(current_state):
+    n = current_state.size
+    min_conflicts = float("inf")
+    best_successor = None
+
+    # Generate neighboring states by moving one queen at a time.
+    neighbors = []
+    for row in range(n):
+        for new_col in range(n):
+            if current_state.queens[row] != new_col:
+                neighbor = copy.deepcopy(current_state)
+                neighbor.remove_queen(row, current_state.queens[row])
+                neighbor.place_queen(row, new_col)
+                neighbors.append(neighbor)
+
+    min_neighbor = min(neighbors, key=lambda state: state.total_conflicts)
+
+    return min_neighbor
+def hill_climbing(n, consecutive_iterations_to_terminate=50):
+    current = NQueens_board(n)
+    current.generate_random()
+    consecutive_stagnant_iterations = 0
+    while True:
+        neighbor = get_min_conflicts_successor(current)
+        if neighbor.total_conflicts >= current.total_conflicts:
+            consecutive_stagnant_iterations += 1
+            if consecutive_stagnant_iterations >= consecutive_iterations_to_terminate:
+                return current  # Terminate if stuck
+        else:
+            consecutive_stagnant_iterations = 0  # Reset consecutive stagnant iterations
+            return current
+
+        current = neighbor
 
 
-def random_restart_hill_climbing(n, max_iterations, restarts = 100):
+
+def random_restart_hill_climbing(n):
     best_solution = None
     best_conflicts = float("inf")  # Initialize to positive infinity.
 
-    for _ in range(restarts):
-        # Initialize a random or semi-random state as the current state.
-        current_state = NQueens_board(n)
-        current_state.generate_random()
+    iteration = 0
+    while best_conflicts:
+        iteration += 1
 
-        for _ in range(max_iterations):
-            # Calculate the number of conflicts in the current state.
-            current_conflicts = current_state.total_conflicts
+        result = hill_climbing(n)
 
-            if current_conflicts == 0:
-                # If no conflicts are found, it's a goal state.
-                # Return the current state as the solution.
-                return current_state
+        if result.total_conflicts < best_conflicts:
+            best_solution = result
+            best_conflicts = result.total_conflicts
+        print(best_conflicts)
 
-            # Generate neighboring states by moving one queen at a time.
-            neighbors = []
-
-            for row in range(n):
-                for new_col in range(n):
-                    if current_state.queens[row] != new_col:
-                        neighbor = copy.deepcopy(current_state)
-                        neighbor.remove_queen(row, current_state.queens[row])
-                        neighbor.place_queen(row, new_col)
-                        neighbors.append(neighbor)
-
-            # Find the neighbor with the fewest conflicts.
-            min_neighbor = min(neighbors, key=lambda state: state.total_conflicts)
-
-            if min_neighbor.total_conflicts >= current_conflicts:
-                # If no neighbor has fewer conflicts, we're at a local optimum.
-                # Break out of the inner loop.
-                break
-
-            # Move to the neighbor with fewer conflicts.
-            current_state = min_neighbor
-
-        # Check if the current local optimum is better than the best solution found so far.
-        if current_conflicts < best_conflicts:
-            best_solution = current_state
-            best_conflicts = current_conflicts
-
-    # Return the best solution found across all restarts.
     return best_solution
 
 def random_restart_hill_climbing_annealing(n, max_iterations, restarts = 100):
