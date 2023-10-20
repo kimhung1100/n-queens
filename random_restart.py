@@ -2,6 +2,10 @@ import random
 import main
 from nqueens_board import NQueens_board
 import copy
+import multiprocessing
+import asyncio
+import concurrent.futures
+import  time
 
 # def is_goal(state):
 #     # Check if the current state is a goal state.
@@ -37,26 +41,35 @@ def get_min_conflicts_successor(current_state):
                 neighbor = copy.deepcopy(current_state)
                 neighbor.remove_queen(row, current_state.queens[row])
                 neighbor.place_queen(row, new_col)
-                neighbors.append(neighbor)
+                if(neighbor.total_conflicts < current_state.total_conflicts):
+                    neighbors.append(neighbor)
+    # pick best neighbors
+    if(len(neighbors) > 0):
+        current_state = min(neighbors, key=lambda state: state.total_conflicts)
 
-    min_neighbor = min(neighbors, key=lambda state: state.total_conflicts)
+    return current_state
 
-    return min_neighbor
-def hill_climbing(n, consecutive_iterations_to_terminate=50):
+def nQueens_heuristics(state: NQueens_board):
+    n = state.size
+    position1 = random.randint(0, n - 1)
+    position2 = random.randint(0, n - 1)
+    new_state = copy.deepcopy(state)
+    new_state.remove_queen(position1, new_state.queens[position1])
+    new_state.place_queen(position1, state.queens[position2])
+
+    new_state.remove_queen(position2, new_state.queens[position2])
+    new_state.place_queen(position2, state.queens[position1])
+    return new_state
+
+def hill_climbing(n):
     current = NQueens_board(n)
     current.generate_random()
-    consecutive_stagnant_iterations = 0
     while True:
-        neighbor = get_min_conflicts_successor(current)
-        if neighbor.total_conflicts >= current.total_conflicts:
-            consecutive_stagnant_iterations += 1
-            if consecutive_stagnant_iterations >= consecutive_iterations_to_terminate:
-                return current  # Terminate if stuck
-        else:
-            consecutive_stagnant_iterations = 0  # Reset consecutive stagnant iterations
-            return current
+        min_conflict_neighbor = get_min_conflicts_successor(current)
 
-        current = neighbor
+        if min_conflict_neighbor.total_conflicts >= current.total_conflicts:
+            return min_conflict_neighbor
+        current = min_conflict_neighbor
 
 
 
@@ -74,8 +87,29 @@ def random_restart_hill_climbing(n):
             best_solution = result
             best_conflicts = result.total_conflicts
         print(best_conflicts)
+        print(result.total_conflicts)
 
     return best_solution
+
+async def run_hill_climbing(n, consecutive_iterations_to_terminate=50):
+    return hill_climbing(n, consecutive_iterations_to_terminate)
+
+async def parallel_random_restart_hill_climbing(n, num_processes, consecutive_iterations_to_terminate=50):
+    best_solution = None
+    best_conflicts = float("inf")
+    restarts = 0
+    with concurrent.futures.ProcessPoolExecutor(max_workers=num_processes) as executor:
+        while best_conflicts > 0:
+            tasks = [run_hill_climbing(n, consecutive_iterations_to_terminate) for _ in range(num_processes)]
+            results = await asyncio.gather(*tasks)
+            for result in results:
+                if result.total_conflicts < best_conflicts:
+                    best_solution = result
+                    best_conflicts = result.total_conflicts
+            restarts += 1
+            print(best_conflicts)
+
+    return best_solution, restarts
 
 def random_restart_hill_climbing_annealing(n, max_iterations, restarts = 100):
     """
@@ -144,17 +178,23 @@ def random_restart_hill_climbing_annealing(n, max_iterations, restarts = 100):
     # If we reach this point, no solution was found.
     return None
 
+def run_test_parallel_hill(n):
+    loop = asyncio.get_event_loop()
+    best_solution = loop.run_until_complete(parallel_random_restart_hill_climbing(n, num_processes=8))
+    print("Best solution found:", best_solution[0].queens, best_solution[1])
+    # best_solution.print_board()
+
+def run_test_rr_hc(n):
+    best_solution = random_restart_hill_climbing(n)
+    print(best_solution.queens)
+    best_solution.print_board()
+
 if __name__ == "__main__":
-    # Example usage:
-    n = 10  # Number of queens
-    max_iterations = 5  # Maximum iterations for random restarts
-    restart = 5
-    while True:
-        solution = random_restart_hill_climbing(n, max_iterations)
-        if solution.is_goal():
-            break
-        else:
-            restart += 10
-            max_iterations += 10
-    print("Best Solution:", solution)
-    main.print_queens_board(solution)
+    n = int(input("Input n: "))
+    start = time.time()
+    print("start: ", start)
+    run_test_rr_hc(n)
+    print(time.time() - start)
+
+
+
