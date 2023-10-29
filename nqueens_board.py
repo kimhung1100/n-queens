@@ -103,6 +103,18 @@ class NQueens_board:
         for row in range(self.size):
             col = random.randint(0, self.size - 1)
             self.place_queen(row, col)
+    def generate_random_distinct(self):
+        # Clear the board and conflicts
+        self.clear_board()
+
+        # Create a list of column indices, shuffle it
+        columns = list(range(self.size))
+        random.shuffle(columns)
+
+        # Place queens in distinct columns
+        for row in range(self.size):
+            col = columns.pop()
+            self.place_queen(row, col)
 
     def clear_board(self):
         # Clear the board and reset conflicts

@@ -3,44 +3,6 @@ import random
 import math
 import copy
 import time
-def simulated_annealing(n, max_iterations, initial_temperature, cooling_rate):
-    current_state = NQueens_board(n)
-    current_state.generate_random()
-    best_state = current_state
-    best_conflicts = current_state.total_conflicts
-    temperature = initial_temperature
-
-    for _ in range(max_iterations):
-        if best_conflicts == 0:
-            return best_state
-
-        # Randomly select a queen and a new position for it
-        row = random.randint(0, n - 1)
-        new_col = random.randint(0, n - 1)
-        old_col = current_state.queens[row]
-        current_conflicts = current_state.total_conflicts
-        current_state.remove_queen(row, old_col)
-        current_state.place_queen(row, new_col)
-        new_conflicts = current_state.total_conflicts
-
-        # Calculate change in conflicts
-        delta_conflicts = new_conflicts - current_conflicts
-
-        # If the move is better or accepted by probability, keep it
-        if delta_conflicts <= 0 or random.random() < math.exp(-delta_conflicts / temperature):
-            current_conflicts = new_conflicts
-            if current_conflicts < best_conflicts:
-                best_state = current_state
-                best_conflicts = current_conflicts
-        else:
-            # Revert the move if not accepted
-            current_state.remove_queen(row, current_state.queens[row])
-            current_state.place_queen(row, old_col)
-
-        # Reduce temperature
-        temperature *= cooling_rate
-
-    return best_state
 
 def nQueens_heuristics(state: NQueens_board, n: int):
     position1 = random.randint(0, n - 1)
@@ -102,9 +64,7 @@ def sa_nqueens(start, cooling_rate, temperature, n, current_state = None):
         for row, col in enumerate(queen_positions):
             current_state.place_queen(row, col)
 
-
     current_conflicts = current_state.total_conflicts
-
     while current_conflicts > 0:
         next_state = nQueens_heuristics(current_state, n)
         if next_state.total_conflicts < current_conflicts:
@@ -117,15 +77,80 @@ def sa_nqueens(start, cooling_rate, temperature, n, current_state = None):
                 current_state = copy.deepcopy(next_state)
                 current_conflicts = next_state.total_conflicts
         temperature = temperature*cooling_rate
+        delta_fitness = next_state.total_conflicts - current_conflicts
+
+        print(current_conflicts)
+        with open("sa_step_print.txt", "a") as f:
+            f.write(f"{current_conflicts} ")
+            f.write(f"{temperature}\n")
+
+    return current_state
+
+def sa_stop(start, cooling_rate, temperature, n, current_state = None):
+    # heuristics
+    if not current_state:
+        queen_positions = list(range(n))
+        current_state = NQueens_board(n)
+
+        # Place queens in the specified positions
+        for row, col in enumerate(queen_positions):
+            current_state.place_queen(row, col)
+
+    max_iter = n * 5000
+    iter = 0
+    current_conflicts = current_state.total_conflicts
+    while current_conflicts > 0:
+        next_state = nQueens_heuristics(current_state, n)
+        if next_state.total_conflicts < current_conflicts:
+            current_state = copy.deepcopy(next_state)
+            current_conflicts = next_state.total_conflicts
+        else:
+
+            delta_fitness = next_state.total_conflicts - current_conflicts
+            if random.random() < math.exp(-delta_fitness / temperature):
+                current_state = copy.deepcopy(next_state)
+                current_conflicts = next_state.total_conflicts
+        temperature = temperature*cooling_rate
+        delta_fitness = next_state.total_conflicts - current_conflicts
 
         print(current_conflicts)
         with open("sa_step.txt", "w") as f:
             f.write(f"{time.time() - start},")
             f.write(f"{current_conflicts},")
             f.write(f"{current_state.queens},")
-            f.write(f"{temperature}\n")
+            f.write(f"{math.exp(-delta_fitness / temperature)}\n")
+        iter += 1
+        if (iter >= max_iter):
+            break
 
     return current_state
+
+def simulate_anealing_restart(n):
+    cooling_rate = .99
+    initial_temperature = 1000.0
+    temp_range = 100
+
+    iteration = 0
+    start = time.time()
+    queen_positions = list(range(n))
+    current_state = NQueens_board(n)
+
+    # Place queens in the specified positions
+    for row, col in enumerate(queen_positions):
+        current_state.place_queen(row, col)
+    best_conflicts = current_state.total_conflicts
+    best_solution = current_state
+    while best_conflicts:
+        iteration += 1
+        result = sa_stop(start, cooling_rate, initial_temperature, n,  current_state)
+
+        if result.total_conflicts < best_conflicts:
+            best_solution = result
+            best_conflicts = result.total_conflicts
+        print(best_conflicts)
+        print(result.total_conflicts)
+
+    return best_solution
 
 def very_fast_sa(start, cooling_rate, initial_temperature, n, current_state = None):
     if not current_state:
@@ -170,10 +195,10 @@ def very_fast_sa(start, cooling_rate, initial_temperature, n, current_state = No
 
 # Example usage:
 if __name__ == '__main__':
-    n = 100  # Number of queens
+    n = int(input("Inpute N: "))
     initial_temperature = 1000.0
     cooling_rate = 0.99
     start = time.time()
-    solution = very_fast_sa(start, cooling_rate, initial_temperature, n)
+    solution = simulate_anealing_restart(n)
     solution.print_board()
     print("Runtime in second:", time.time() - start)
