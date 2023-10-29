@@ -63,13 +63,17 @@ def nQueens_heuristics(state: NQueens_board):
 
 def hill_climbing(n):
     current = NQueens_board(n)
-    current.generate_random()
+    current.generate_random_distinct()
+    iterate = 0
     while True:
         min_conflict_neighbor = get_min_conflicts_successor(current)
+        with open("hill_climb.txt", "a") as f:
+            f.write(f"{min_conflict_neighbor.total_conflicts}\n")
 
-        if min_conflict_neighbor.total_conflicts >= current.total_conflicts:
+        if min_conflict_neighbor.total_conflicts >= current.total_conflicts or iterate == n:
             return min_conflict_neighbor
         current = min_conflict_neighbor
+        iterate += 1
 
 
 
