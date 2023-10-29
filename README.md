@@ -8,7 +8,7 @@ python main.py
 ---
 
 - [ ] Slide https://www.overleaf.com/3643154285cbpwnjpfqymg 
-- [ ]  DFS implementation
+- [x]  DFS implementation
 
 - [x] BrFS implementation
 

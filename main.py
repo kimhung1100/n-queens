@@ -66,7 +66,7 @@ if __name__ == "__main__":
         print("No solution")
     else:
         print("Choice of algorithm: ")
-        print("1. Depth first search (not implemented)")
+        print("1. Depth first search")
         print("2. Breadth first search")
         print("3. Stimulated annealing")
         print("4. Random-restart hill climbing")
