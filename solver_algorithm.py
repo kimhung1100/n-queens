@@ -46,6 +46,48 @@ def breadth_first_search(n: int):
             # If the BFS doesn't find a solution, return None or handle it as needed
     return None
 
+def depth_first_search(n: int):
+    """
+    Implemented based on pseudo-code textbook in page xx
+
+    Time and space complexity: O(b^m) and O(b*m)
+
+    Return a solution node or a failure
+
+        :rtype: board
+    """
+    board = NQueens_board(n)
+
+    if board.is_goal():
+        return board
+    frontier = deque()
+    frontier.append(board)
+    reached = [board.queens]
+    while frontier:
+        node = frontier.pop()  # Dequeue the last node from the frontier
+
+        # Expand the current node and generate next board states
+        if node.order_queens:
+            # If the order_queens list is not empty, get the position of the last queen.
+            next_states = node.expand(node.order_queens[-1][0], node.order_queens[-1][1])
+        else:
+            # If the order_queens list is empty, pass (-1, -1) as parameters.
+            next_states = node.expand(-1, -1)
+
+        for next_state in next_states:
+            # Check if the next state is a goal state
+            if next_state.is_goal():
+                return next_state  # Return the goal state
+
+            # Check if the next state has not been reached before
+            if next_state.queens not in reached:
+                reached.append(next_state.queens)  # Add the next state to reached
+                frontier.append(
+                    next_state
+                )  # Enqueue the next state for further exploration
+
+            # If the DFS doesn't find a solution, return None or handle it as needed
+    return None
 
 def initialize_board(n: int):
     # Create a list of integers from 0 to N-1 representing column positions.

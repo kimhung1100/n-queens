@@ -34,7 +34,7 @@ def log_statistics(choice: int, solutions: [int], execution_time, max_iterations
 
 def solve_nqueens(n, choice, max_iterations=0):
     if choice == 1:
-        pass
+        sol = depth_first_search(n)
     elif choice == 2:
         sol = breadth_first_search(n)
     elif choice == 3:
